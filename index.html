@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر طالب الله الشامل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+        body {
+            background-color: #f4f6f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, #093824, #125c3a, #1b8a54);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border-bottom: 4px solid #ffd700;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            font-weight: 900;
+            color: #ffd700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        header p {
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+        .admin-toggle-btn {
+            background-color: #212529;
+            color: #ffd700;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-block;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        .admin-toggle-btn:hover {
+            background-color: #343a40;
+        }
+        .admin-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: none;
+            border-right: 5px solid #1b8a54;
+        }
+        .admin-panel h3 {
+            margin-bottom: 15px;
+            color: #093824;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #495057;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+        .price-row {
+            display: flex;
+            gap: 10px;
+        }
+        .price-row input {
+            flex: 2;
+        }
+        .price-row select {
+            flex: 1;
+        }
+        .save-btn {
+            background-color: #1b8a54;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .save-btn:hover {
+            background-color: #125c3a;
+        }
+        .categories-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            white-space: nowrap;
+        }
+        .cat-btn {
+            background-color: white;
+            border: 2px solid #1b8a54;
+            color: #1b8a54;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        .cat-btn.active, .cat-btn:hover {
+            background-color: #1b8a54;
+            color: white;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .product-images-container {
+            display: flex;
+            height: 180px;
+            background-color: #e9ecef;
+            position: relative;
+        }
+        .product-img {
+            flex: 1;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            border-left: 1px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+        .product-body {
+            padding: 15px;
+        }
+        .product-category-tag {
+            font-size: 0.75rem;
+            background: #e6f4ed;
+            color: #1b8a54;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #212529;
+        }
+        .product-desc {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+        .product-footer {
+            padding: 12px 15px;
+            background: #fdfdfd;
+            border-top: 1px solid #f1f3f5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .price {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1b8a54;
+        }
+        .buy-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .buy-btn {
+            background-color: #25d366;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.75rem;
+            border: none;
+            cursor: pointer;
+        }
+        .buy-btn:hover {
+            background-color: #1ebe5d;
+        }
+        footer {
+            text-align: center;
+            padding: 25px;
+            background-color: #212529;
+            color: white;
+            margin-top: 40px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>متجر طالب الله</h1>
+        <p>متجرك الشامل لكافة الاحتياجات والسلع... نسعى لرزقك، ونلبي طلبك.</p>
+    </header>
+
+    <div class="container">
+        <button class="admin-toggle-btn" onclick="toggleAdminPanel()">➕ لوحة إضافة سلعة جديدة</button>
+
+        <div class="admin-panel" id="adminPanel">
+            <h3>إضافة سلعة مع صورتين وخيارات العملات</h3>
+            <div class="form-group">
+                <label>اسم السلعة:</label>
+                <input type="text" id="newTitle" placeholder="مثلاً: قاطع كهربائي، طقم سباكة...">
+            </div>
+            <div class="form-group">
+                <label>القسم:</label>
+                <select id="newCategory">
+                    <option value="كهرباء">كهرباء</option>
+                    <option value="سباكة">سباكة</option>
+                    <option value="أدوات منزلية">أدوات منزلية</option>
+                    <option value="سيارات">سيارات</option>
+                    <option value="أدوات مكتبية">أدوات مكتبية</option>
+                    <option value="أدوات بناء">أدوات بناء</option>
+                    <option value="كتب وثقافة">كتب وثقافة</option>
+                    <option value="أخرى عامة">أخرى عامة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>السعر والعملة:</label>
+                <div class="price-row">
+                    <input type="text" id="newPrice" placeholder="مثلاً: 5000 أو 10">
+                    <select id="newCurrency">
+                        <option value="ر.ي">ريال يمني (ر.ي)</option>
+                        <option value="$">دولار أمريكي ($)</option>
+                        <option value="ر.س">ريال سعودي (ر.س)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>الصورة الرئيسية الأولى:</label>
+                <input type="file" id="newImg1" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>الصورة الثانية الإضافية (اختياري):</label>
+                <input type="file" id="newImg2" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>وصف مختصر:</label>
+                <textarea id="newDesc" rows="2" placeholder="وصف سريع للسلعة..."></textarea>
+            </div>
+            <button class="save-btn" onclick="addNewProduct()">حفظ وإضافة السلعة للمتجر</button>
+        </div>
+
+        <div class="categories-nav" id="categoriesNav">
+            <button class="cat-btn active" onclick="filterProducts('all')">الكل</button>
+            <button class="cat-btn" onclick="filterProducts('كهرباء')">كهرباء</button>
+            <button class="cat-btn" onclick="filterProducts('سباكة')">سباكة</button>
+            <button class="cat-btn" onclick="filterProducts('أدوات منزلية')">أدوات منزلية</button>
+            <button class="cat-btn" onclick="filterProducts('سيارات')">سيارات</button>
+            <button class="cat-btn" onclick="filterProducts('أدوات مكتبية')">أدوات مكتبية</button>
+            <button class="cat-btn" onclick="filterProducts('أدوات بناء')">أدوات بناء</button>
+            <button class="cat-btn" onclick="filterProducts('كتب وثقافة')">كتب وثقافة</button>
+            <button class="cat-btn" onclick="filterProducts('أخرى عامة')">أخرى عامة</button>
+        </div>
+
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+
+    <footer>
+        <p>جميع الحقوق محفوظة لمتجر طالب الله &copy; 2026</p>
+    </footer>
+
+    <script>
+        const whatsappNumber = "967773704939"; 
+
+        let products = JSON.parse(localStorage.getItem('talib_allah_products')) || [
+            { id: 1, title: "مفك براغي وإصلاحات", category: "أدوات بناء", price: "3,500 ر.ي", description: "عدة صيانة متينة.", img1: "", img2: "" },
+            { id: 2, title: "قاطع كهربائي رئيسي", category: "كهرباء", price: "8,000 ر.ي", description: "جودة عالية وآمن.", img1: "", img2: "" }
+        ];
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function addNewProduct() {
+            const title = document.getElementById('newTitle').value.trim();
+            const category = document.getElementById('newCategory').value;
+            const priceVal = document.getElementById('newPrice').value.trim();
+            const currency = document.getElementById('newCurrency').value;
+            const desc = document.getElementById('newDesc').value.trim();
+            
+            const file1 = document.getElementById('newImg1').files[0];
+            const file2 = document.getElementById('newImg2').files[0];
+
+            if(!title || !priceVal) {
+                alert('الرجاء إدخال عنوان السلعة والسعر على الأقل!');
+                return;
+            }
+
+            const fullPrice = `${priceVal} ${currency}`;
+
+            // قراءة الصور وتحويلها لتخزين دائم
+            let reader1 = new FileReader();
+            let reader2 = new FileReader();
+
+            reader1.onload = function(e1) {
+                let imgData1 = e1.target.result;
+                if(file2) {
+                    reader2.onload = function(e2) {
+                        saveToStorage(title, category, fullPrice, desc, imgData1, e2.target.result);
+                    };
+                    reader2.readAsDataURL(file2);
+                } else {
+                    saveToStorage(title, category, fullPrice, desc, imgData1, "");
+                }
+            };
+
+            if(file1) {
+                reader1.readAsDataURL(file1);
+            } else {
+                saveToStorage(title, category, fullPrice, desc, "", "");
+            }
+        }
+
+        function saveToStorage(title, category, price, desc, img1, img2) {
+            const newProd = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                price: price,
+                description: desc || 'لا يوجد وصف إضافي',
+                img1: img1,
+                img2: img2
+            };
+
+            products.unshift(newProd);
+            localStorage.setItem('talib_allah_products', JSON.stringify(products));
+            
+            document.getElementById('newTitle').value = '';
+            document.getElementById('newPrice').value = '';
+            document.getElementById('newDesc').value = '';
+            document.getElementById('newImg1').value = '';
+            document.getElementById('newImg2').value = '';
+            document.getElementById('adminPanel').style.display = 'none';
+
+            displayProducts('all');
+            alert('تمت إضافة وحفظ السلعة مع صورها بنجاح!');
+        }
+
+        function checkout(title, price, paymentMethod) {
+            let msg = `السلام عليكم، أريد طلب سلعة: ${title}\nالسعر: ${price}\nطريقة الدفع المئوية المفضلة: ${paymentMethod}\nالرجاء تأكيد الطلب وإرسال تفاصيل الحساب للتحويل.`;
+            let encoded = encodeURIComponent(msg);
+            window.open(`https://wa.me/${whatsappNumber}?text=${encoded}`, '_blank');
+        }
+
+        function displayProducts(filteredCategory) {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            const filtered = filteredCategory === 'all' 
+                ? products 
+                : products.filter(p => p.category === filteredCategory);
+
+            if(filtered.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#777; padding:20px;">لا توجد سلع مضافة في هذا القسم حالياً.</p>';
+                return;
+            }
+
+            filtered.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                
+                let bg1 = product.img1 ? `background-image: url('${product.img1}');` : '';
+                let txt1 = product.img1 ? '' : 'صورة 1';
+                let bg2 = product.img2 ? `background-image: url('${product.img2}');` : '';
+                let txt2 = product.img2 ? '' : (product.img1 ? 'صورة 2' : '');
+
+                card.innerHTML = `
+                    <div class="product-images-container">
+                        <div class="product-img" style="${bg1}">${txt1}</div>
+                        ${product.img2 ? `<div class="product-img" style="${bg2}">${txt2}</div>` : ''}
+                    </div>
+                    <div class="product-body">
+                        <span class="product-category-tag">${product.category}</span>
+                        <h3 class="product-title">${product.title}</h3>
+                        <p class="product-desc">${product.description}</p>
+                    </div>
+                    <div class="product-footer">
+                        <span class="price">${product.price}</span>
+                        <div class="buy-actions">
+                            <button class="buy-btn" style="background:#007bff;" onclick="checkout('${product.title}', '${product.price}', 'حساب الكريمي')">الكريمي</button>
+                            <button class="buy-btn" style="background:#ffc107; color:#000;" onclick="checkout('${product.title}', '${product.price}', 'حساب القعيطي')">القعيطي</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterProducts(category) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.textContent.includes(category === 'all' ? 'الكل' : category)) {
+                    btn.classList.add('active');
+                }
+            });
+            displayProducts(category);
+        }
+
+        window.onload = () => displayProducts('all');
+    </script>
+</body>
+</html>
