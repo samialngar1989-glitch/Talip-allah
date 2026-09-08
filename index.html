@@ -542,7 +542,6 @@
                 <option value="كتب وثقافة">كتب وثقافة</option>
                 <option value="لوحات وديكور">لوحات وديكور</option>
                 <option value="هواتف">هواتف</option>
-                <option value="ملابس">ملابس</option>
                 <option value="أخرى عامة">أخرى عامة</option>
             </select>
         </div>
@@ -647,7 +646,7 @@
 <script>
     // ===== CONFIG =====
     const WHATSAPP_NUMBER = "967773704939";
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-7f3-Ctfu6RtuJz4fT6pBlNNXnxXdODd2qp6t_9YAJaK01ORzN_4_fqAQ4AkGcyNrSA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_AL29yGg0d1Yz5aynx-3Azq_DmsDaMFUk5E-Taoz8w1SimpHa3-wQrMtz5ol9TbFOKw/exec";
 
     // ===== STATE =====
     let products = [];
@@ -681,7 +680,7 @@
             .then(data => {
                 products = data.reverse().map(p => ({
                     ...p,
-                    stock: p.stock !== undefined ? Number(p.stock) : 10
+                    stock: p.stock !== undefined && p.stock !== '' ? Number(p.stock) : 0
                 }));
                 renderProducts(currentCategory);
             })
@@ -841,7 +840,7 @@
         checkoutOverlay.classList.remove('active');
     }
 
-    // ===== SUBMIT CHECKOUT =====
+    // ===== SUBMIT CHECKOUT (مع نظام التأكيد) =====
     function submitCheckout() {
         const product = currentModalProduct;
         if (!product) {
@@ -858,73 +857,70 @@
             return;
         }
 
-        // Decrement stock
-        const newStock = Math.max(0, Number(product.stock) - 1);
-        product.stock = newStock;
+        // استخراج معرف السكريبت من الرابط
+        const scriptId = SCRIPT_URL.replace('https://script.google.com/macros/s/', '').replace('/exec', '');
+        const confirmLink = `https://script.google.com/macros/s/${scriptId}/exec?action=confirm&product=${encodeURIComponent(product.title)}`;
 
         const msg = `
-السلام عليكم، أريد طلب سلعة:
+🛍️ طلب شراء جديد
+
 📦 المنتج: ${product.title}
 🏷️ القسم: ${product.category || 'عام'}
 💰 السعر: ${product.price}
-📊 الكمية المتبقية: ${newStock}
+📊 الكمية المطلوبة: 1
 
 🧾 بيانات المشتري:
 🏦 نوع الحساب: ${accountType}
 🔢 رقم الحساب/الهاتف: ${accountNumber}
 💳 طريقة الدفع: ${paymentMethod}
 
-يرجى تأكيد الطلب.
+📌 لتأكيد البيع وخصم الكمية، اضغط على الرابط:
+${confirmLink}
+
+⚠️ ملاحظة: سيتم خصم الكمية فقط بعد تأكيد البيع.
         `.trim();
 
         const encoded = encodeURIComponent(msg);
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
 
-        // Auto-delete if stock = 0
-        if (newStock === 0) {
-            const idx = products.indexOf(product);
-            if (idx > -1) products.splice(idx, 1);
-            alert('🔴 تم حذف السلعة تلقائياً لأن الكمية أصبحت صفراً.');
-        }
-
-        renderProducts(currentCategory);
+        alert('✅ تم إرسال طلب الشراء إلى البائع.\n⏳ سيتم خصم الكمية فقط بعد تأكيد البيع.');
+        
         closeCheckout();
         closeModal();
-        updateCartCount();
     }
 
     // ===== ADD NEW PRODUCT =====
     function addNewProduct() {
-    const title = document.getElementById('newTitle').value.trim();
-    const category = document.getElementById('newCategory').value;
-    const priceVal = document.getElementById('newPrice').value.trim();
-    const currency = document.getElementById('newCurrency').value;
-    const stock = parseInt(document.getElementById('newStock').value) || 0;
-    const imgUrl1 = document.getElementById('newImgUrl1').value.trim();
-    const imgUrl2 = document.getElementById('newImgUrl2').value.trim();
-    const desc = document.getElementById('newDesc').value.trim();
+        const title = document.getElementById('newTitle').value.trim();
+        const category = document.getElementById('newCategory').value;
+        const priceVal = document.getElementById('newPrice').value.trim();
+        const currency = document.getElementById('newCurrency').value;
+        const stock = parseInt(document.getElementById('newStock').value) || 0;
+        const imgUrl1 = document.getElementById('newImgUrl1').value.trim();
+        const imgUrl2 = document.getElementById('newImgUrl2').value.trim();
+        const desc = document.getElementById('newDesc').value.trim();
 
-    if (!title || !priceVal) {
-        alert('الرجاء إدخال عنوان السلعة والسعر.');
-        return;
-    }
+        if (!title || !priceVal) {
+            alert('الرجاء إدخال عنوان السلعة والسعر.');
+            return;
+        }
 
-    if (stock <= 0) {
-        alert('⚠️ الرجاء إدخال كمية أكبر من صفر.');
-        return;
-    }
+        if (stock <= 0) {
+            alert('⚠️ الرجاء إدخال كمية أكبر من صفر.');
+            return;
+        }
 
-    const fullPrice = `${priceVal} ${currency}`;
+        const fullPrice = `${priceVal} ${currency}`;
 
-    const newProduct = {
-        title,
-        category,
-        price: fullPrice,
-        stock: stock,  // <-- هنا يتم إرسال العدد المدخل
-        img1: imgUrl1,
-        img2: imgUrl2,
-        description: desc || 'لا يوجد وصف إضافي'
-    };
+        const newProduct = {
+            title,
+            category,
+            price: fullPrice,
+            stock,
+            img1: imgUrl1,
+            img2: imgUrl2,
+            description: desc || 'لا يوجد وصف إضافي'
+        };
 
         fetch(SCRIPT_URL, {
             method: 'POST',
