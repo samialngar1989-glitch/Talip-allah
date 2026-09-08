@@ -647,7 +647,7 @@
 <script>
     // ===== CONFIG =====
     const WHATSAPP_NUMBER = "967773704939";
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyraLAOf4Zrm6RRrsfj0VdRsLl4EO54Sujm8KywDgZTRMAaUXxr-REoqR8Ir-ZAIqTtw/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-7f3-Ctfu6RtuJz4fT6pBlNNXnxXdODd2qp6t_9YAJaK01ORzN_4_fqAQ4AkGcyNrSA/exec";
 
     // ===== STATE =====
     let products = [];
@@ -895,31 +895,36 @@
 
     // ===== ADD NEW PRODUCT =====
     function addNewProduct() {
-        const title = document.getElementById('newTitle').value.trim();
-        const category = document.getElementById('newCategory').value;
-        const priceVal = document.getElementById('newPrice').value.trim();
-        const currency = document.getElementById('newCurrency').value;
-        const stock = parseInt(document.getElementById('newStock').value) || 10;
-        const imgUrl1 = document.getElementById('newImgUrl1').value.trim();
-        const imgUrl2 = document.getElementById('newImgUrl2').value.trim();
-        const desc = document.getElementById('newDesc').value.trim();
+    const title = document.getElementById('newTitle').value.trim();
+    const category = document.getElementById('newCategory').value;
+    const priceVal = document.getElementById('newPrice').value.trim();
+    const currency = document.getElementById('newCurrency').value;
+    const stock = parseInt(document.getElementById('newStock').value) || 0;
+    const imgUrl1 = document.getElementById('newImgUrl1').value.trim();
+    const imgUrl2 = document.getElementById('newImgUrl2').value.trim();
+    const desc = document.getElementById('newDesc').value.trim();
 
-        if (!title || !priceVal) {
-            alert('الرجاء إدخال عنوان السلعة والسعر.');
-            return;
-        }
+    if (!title || !priceVal) {
+        alert('الرجاء إدخال عنوان السلعة والسعر.');
+        return;
+    }
 
-        const fullPrice = `${priceVal} ${currency}`;
+    if (stock <= 0) {
+        alert('⚠️ الرجاء إدخال كمية أكبر من صفر.');
+        return;
+    }
 
-        const newProduct = {
-            title,
-            category,
-            price: fullPrice,
-            stock,
-            img1: imgUrl1,
-            img2: imgUrl2,
-            description: desc || 'لا يوجد وصف إضافي'
-        };
+    const fullPrice = `${priceVal} ${currency}`;
+
+    const newProduct = {
+        title,
+        category,
+        price: fullPrice,
+        stock: stock,  // <-- هنا يتم إرسال العدد المدخل
+        img1: imgUrl1,
+        img2: imgUrl2,
+        description: desc || 'لا يوجد وصف إضافي'
+    };
 
         fetch(SCRIPT_URL, {
             method: 'POST',
