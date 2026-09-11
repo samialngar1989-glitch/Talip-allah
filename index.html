@@ -786,7 +786,7 @@
         // ===== CONFIG =====
         // ============================================================
         const WHATSAPP_NUMBER = "967773704939";
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrf0jWAqAz1rO6dKmFnfI1RZKl3e-q1eh1XN_I7yx1_XwFRkCF-iVPVdwXY4yNDDIQHw/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxsFfm5Wku0RFgucXxPSn2hqnR99huCRKpsuOhxXOT0G3i5nLbdxmIOGkLR5S-JdTJlSA/exec";
 
         // ============================================================
         // ===== STATE =====
@@ -805,7 +805,7 @@
         let qtyModalQuantity = 1;
 
         const EXCHANGE_RATES = { 'ر.ي': 1, '$': 1600, 'ر.س': 410 };
-        const ADMIN_PASSWORD = "123456";
+        const ADMIN_PASSWORD = "1122";
 
         // ============================================================
         // ===== DOM REFS =====
@@ -1755,19 +1755,31 @@ ${confirmLinks}
         // ============================================================
         function renderSoldProductsAuto() {
             const container = document.getElementById('soldProductsAutoList');
-            const soldItems = Object.entries(soldProducts).filter(([_, count]) => count > 0);
+
+            const sales = (dashboardStats && dashboardStats.sales) || salesHistory || [];
+            const salesSummary = {};
+            sales.forEach(s => {
+                const prod = s.product;
+                if (!prod) return;
+                if (!salesSummary[prod]) salesSummary[prod] = { count: 0, category: s.category || '' };
+                salesSummary[prod].count += Number(s.quantity) || 1;
+            });
+
+            const soldItems = Object.entries(salesSummary).filter(([_, data]) => data.count > 0);
+
             if (soldItems.length === 0) {
                 container.innerHTML = '<p style="color:var(--text-secondary);">لا توجد منتجات مباعة حتى الآن.</p>';
                 return;
             }
+
             let html = '';
-            soldItems.forEach(([title, count]) => {
+            soldItems.forEach(([title, data]) => {
                 const product = products.find(p => p.title === title);
                 const price = product ? product.price : 'غير معروف';
                 html += `
                     <div class="sold-product-item">
                         <span class="sold-name">${escapeHTML(title)}</span>
-                        <span class="sold-count">الكمية: ${count}</span>
+                        <span class="sold-count">الكمية: ${data.count}</span>
                         <span class="sold-price">${escapeHTML(price)}</span>
                     </div>
                 `;
@@ -1783,7 +1795,7 @@ ${confirmLinks}
             const totalProducts = stats.totalProducts || products.length;
             const totalStock = stats.totalStock || products.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
             const inStock = stats.inStock || products.filter(p => Number(p.stock) > 0).length;
-            const totalSold = stats.totalSold || Object.values(soldProducts).reduce((sum, val) => sum + val, 0);
+            const totalSold = stats.totalSold || 0;
             const soldValueYER = stats.soldValueYER || 0;
             const totalValueYER = stats.totalValueYER || products.reduce((sum, p) => {
                 const priceNum = extractPriceNumber(p.price);
@@ -1805,11 +1817,22 @@ ${confirmLinks}
             document.getElementById('statSoldValueYER').textContent = Math.round(soldValueYER).toLocaleString();
             document.getElementById('statTotalCustomers').textContent = customersCount;
 
+            // ✅ حساب قيمة المخزون حسب العملة محلياً
             const priceGrid = document.getElementById('priceDetailGrid');
-            const currencyValues = stats.currencyValues || { 'ر.ي': 0, '$': 0, 'ر.س': 0 };
+            let currencyValues = { 'ر.ي': 0, '$': 0, 'ر.س': 0 };
+            products.forEach(p => {
+                const priceNum = extractPriceNumber(p.price);
+                const currency = extractCurrency(p.price);
+                const stock = Number(p.stock) || 0;
+                if (currencyValues[currency] === undefined) currencyValues[currency] = 0;
+                currencyValues[currency] += priceNum * stock;
+            });
+
             let priceHTML = '';
+            let hasAny = false;
             for (const [currency, amount] of Object.entries(currencyValues)) {
                 if (amount > 0) {
+                    hasAny = true;
                     priceHTML += `
                         <div class="price-detail-item">
                             <div class="amount">${Math.round(amount).toLocaleString()}</div>
@@ -1818,7 +1841,7 @@ ${confirmLinks}
                     `;
                 }
             }
-            priceGrid.innerHTML = priceHTML || '<p style="color:var(--text-secondary);">لا توجد منتجات</p>';
+            priceGrid.innerHTML = hasAny ? priceHTML : '<p style="color:var(--text-secondary);">لا توجد منتجات</p>';
 
             const categoryList = document.getElementById('categoryProductList');
             let filteredProducts = products;
