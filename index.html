@@ -385,19 +385,22 @@
         <a href="#" class="navbar-brand">
             <i class="fas fa-store"></i>
             متجر طالب الله
-        </a>
-        <div class="navbar-actions">
-            <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()" title="تحديث">
-                <i class="fas fa-sync-alt"></i>
-            </button>
-            <button class="navbar-btn" onclick="openCartModal()">
-                <i class="fas fa-shopping-cart"></i>
-                <span id="navCartCount">0</span>
-            </button>
-            <button class="dark-toggle" onclick="toggleDarkMode()">
-                <i class="fas fa-moon"></i>
-            </button>
-        </div>
+        </a><div class="navbar-actions">
+    <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()" title="تحديث">
+        <i class="fas fa-sync-alt"></i>
+    </button>
+    <button class="navbar-btn" id="installBtn" onclick="installPWA()" style="display:none;">
+        <i class="fas fa-download"></i>
+        <span>تثبيت</span>
+    </button>
+    <button class="navbar-btn" onclick="openCartModal()">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="navCartCount">0</span>
+    </button>
+    <button class="dark-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i>
+    </button>
+</div>
     </nav>
 
     <div class="container">
@@ -2633,7 +2636,68 @@
             startAutoRefresh();
             if (isTokenValid()) updateSessionTimer();
         };
+// ============================================================
+// ===== PWA - التثبيت والتسجيل =====
+// ============================================================
+let deferredPrompt = null;
 
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) installBtn.style.display = 'flex';
+    console.log('✅ يمكن تثبيت التطبيق');
+});
+
+async function installPWA() {
+    if (!deferredPrompt) {
+        showToast('⚠️ التثبيت غير متاح', 'warning');
+        return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+        showToast('✅ تم التثبيت! ابحث عن الأيقونة', 'success');
+    } else {
+        showToast('❌ تم إلغاء التثبيت', 'warning');
+    }
+    deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) installBtn.style.display = 'none';
+}
+
+window.addEventListener('appinstalled', () => {
+    console.log('✅ تم تثبيت التطبيق');
+    showToast('🎉 استمتع بالتطبيق!', 'success');
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) installBtn.style.display = 'none';
+});
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(registration => {
+                console.log('✅ Service Worker مسجل:', registration.scope);
+                setInterval(() => {
+                    registration.update();
+                }, 3600000);
+            })
+            .catch(err => {
+                console.warn('⚠️ فشل تسجيل Service Worker:', err);
+            });
+    });
+}
+
+// ===== مؤشر عدم الاتصال =====
+window.addEventListener('online', () => {
+    showToast('✅ عاد الاتصال بالإنترنت', 'success');
+});
+
+window.addEventListener('offline', () => {
+    showToast('📴 انقطع الاتصال بالإنترنت', 'warning');
+});
+
+        
         window.addEventListener('beforeunload', () => {
             stopAutoRefresh();
             stopSessionTimer();
