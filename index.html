@@ -4,14 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>متجر طالب الله</title>
-    <meta name="theme-color" content="#2563eb" />
-<meta name="description" content="متجر إلكتروني شامل - تسوق بسهولة" />
-<link rel="manifest" href="./manifest.json" />
-<link rel="apple-touch-icon" href="./icon-192.png" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="متجر طالب" />
-<meta name="mobile-web-app-capable" content="yes" />
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
@@ -377,7 +369,50 @@
             .invoice-logo { width: 70px; height: 70px; }
             .invoice-store-name { font-size: 1.4rem; }
         }
-    </style>
+   /* ===== INSTALL BANNER ===== */
+.install-banner {
+    position: fixed; top: 70px; left: 10px; right: 10px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff; padding: 14px 18px; border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(37,99,235,0.4);
+    z-index: 999; display: none; align-items: center; gap: 12px;
+    animation: slideDownBanner 0.5s ease;
+}
+.install-banner.show { display: flex; }
+.install-banner i.banner-icon { font-size: 1.8rem; color: #fbbf24; }
+.install-banner .banner-text { flex: 1; font-size: 0.9rem; font-weight: 600; }
+.install-banner .banner-text small { display: block; opacity: 0.85; font-weight: 400; font-size: 0.75rem; margin-top: 2px; }
+.install-banner button { background: #fff; color: #2563eb; border: none; padding: 8px 16px; border-radius: 30px; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
+.install-banner .close-banner { background: rgba(255,255,255,0.2); color: #fff; padding: 6px 10px; font-size: 0.9rem; }
+@keyframes slideDownBanner { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== WELCOME MODAL ===== */
+.welcome-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.welcome-overlay.active { display: flex; }
+.welcome-box { background: var(--bg-card); max-width: 400px; width: 100%; border-radius: 28px; padding: 32px 26px; text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.4); animation: slideUp 0.4s ease; }
+.welcome-icon { width: 80px; height: 80px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 18px; color: #fff; }
+.welcome-box h2 { color: var(--text-primary); font-size: 1.4rem; margin-bottom: 10px; }
+.welcome-box p { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.7; margin-bottom: 16px; }
+.welcome-features { background: var(--bg-primary); border-radius: 14px; padding: 14px 18px; text-align: right; margin-bottom: 20px; }
+.welcome-features div { padding: 6px 0; font-size: 0.88rem; color: var(--text-primary); font-weight: 500; }
+.welcome-features div i { color: var(--success); margin-left: 8px; }
+.welcome-btn { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 8px 20px rgba(34,197,94,0.3); }
+.welcome-skip { background: transparent; border: none; color: var(--text-secondary); font-size: 0.85rem; margin-top: 12px; cursor: pointer; padding: 6px; }
+
+/* ===== NEW ORDER NOTIFICATION ===== */
+.new-order-overlay { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-200px); background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; padding: 18px 24px; border-radius: 20px; z-index: 6000; display: flex; align-items: center; gap: 14px; box-shadow: 0 20px 60px rgba(34,197,94,0.5); transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 90vw; cursor: pointer; }
+.new-order-overlay.show { transform: translateX(-50%) translateY(0); }
+.new-order-overlay i { font-size: 2rem; animation: ring 1s infinite; }
+.new-order-overlay .new-order-text { flex: 1; }
+.new-order-overlay .new-order-title { font-weight: 800; font-size: 1rem; }
+.new-order-overlay .new-order-sub { font-size: 0.8rem; opacity: 0.9; margin-top: 2px; }
+@keyframes ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
+
+/* ===== APP MODE BADGE ===== */
+.app-mode-badge { position: fixed; bottom: 90px; right: 24px; background: var(--success); color: #fff; padding: 8px 14px; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 99; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(34,197,94,0.4); }
+.app-mode-badge.show { display: flex; }
+.app-mode-badge .dot-app { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 2s infinite; }
+ </style>
 </head>
 <body>
 
@@ -385,22 +420,23 @@
         <a href="#" class="navbar-brand">
             <i class="fas fa-store"></i>
             متجر طالب الله
-        </a><div class="navbar-actions">
-    <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()" title="تحديث">
-        <i class="fas fa-sync-alt"></i>
-    </button>
-    <button class="navbar-btn" id="installBtn" onclick="installPWA()" style="display:none;">
-        <i class="fas fa-download"></i>
-        <span>تثبيت</span>
-    </button>
-    <button class="navbar-btn" onclick="openCartModal()">
-        <i class="fas fa-shopping-cart"></i>
-        <span id="navCartCount">0</span>
-    </button>
-    <button class="dark-toggle" onclick="toggleDarkMode()">
-        <i class="fas fa-moon"></i>
-    </button>
-</div>
+        </a>
+        <div class="navbar-actions">
+            <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()" title="تحديث">
+    <i class="fas fa-sync-alt"></i>
+</button>
+<button class="navbar-btn" id="installBtn" onclick="installPWA()" style="display:none;">
+    <i class="fas fa-download"></i>
+    <span>تثبيت</span>
+</button>
+<button class="navbar-btn" onclick="openCartModal()">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="navCartCount">0</span>
+            </button>
+            <button class="dark-toggle" onclick="toggleDarkMode()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
     </nav>
 
     <div class="container">
@@ -895,7 +931,47 @@
     </div>
 
     <div class="toast" id="toast"></div>
+<!-- ===== INSTALL BANNER ===== -->
+<div class="install-banner" id="installBanner">
+    <i class="fas fa-download banner-icon"></i>
+    <div class="banner-text">
+        ثبّت التطبيق على جوالك!
+        <small>اضغط "تثبيت" — يظهر كأيقونة في شاشتك الرئيسية</small>
+    </div>
+    <button onclick="installPWA()">📥 تثبيت</button>
+    <button class="close-banner" onclick="dismissInstallBanner()">✕</button>
+</div>
 
+<!-- ===== WELCOME MODAL ===== -->
+<div class="welcome-overlay" id="welcomeOverlay">
+    <div class="welcome-box">
+        <div class="welcome-icon">🏪</div>
+        <h2 id="welcomeTitle">مرحباً بك في متجر طالب الله!</h2>
+        <p id="welcomeText">يسعدنا تسوقك معنا. تصفح منتجاتنا واطلب بسهولة.</p>
+        <div class="welcome-features">
+            <div><i class="fas fa-check-circle"></i> تصفح بدون تسجيل</div>
+            <div><i class="fas fa-check-circle"></i> طلب مباشر عبر واتساب</div>
+            <div><i class="fas fa-check-circle"></i> عروض وأسعار مميزة</div>
+        </div>
+        <button class="welcome-btn" onclick="closeWelcome()">ابدأ التسوق 🛒</button>
+        <button class="welcome-skip" onclick="closeWelcome()">تخطي</button>
+    </div>
+</div>
+
+<!-- ===== NEW ORDER NOTIFICATION ===== -->
+<div class="new-order-overlay" id="newOrderNotif" onclick="openAdminDashboard()">
+    <i class="fas fa-bell"></i>
+    <div class="new-order-text">
+        <div class="new-order-title" id="newOrderTitle">🔔 طلب جديد!</div>
+        <div class="new-order-sub" id="newOrderSub">اضغط للعرض</div>
+    </div>
+</div>
+
+<!-- ===== APP MODE BADGE ===== -->
+<div class="app-mode-badge" id="appModeBadge">
+    <span class="dot-app"></span>
+    <span>وضع التطبيق</span>
+</div>
     <footer>
         <p>جميع الحقوق محفوظة لمتجر طالب الله &copy; 2026</p>
         <p class="footer-dev">تم التطوير بواسطة <strong>سامي المجيدي</strong> 🚀</p>
@@ -2621,6 +2697,255 @@
         window.addEventListener('focus', () => silentRefresh());
 
         // ============================================================
+        // ===== PWA - INSTALL =====
+        // ============================================================
+        let deferredPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.style.display = 'flex';
+            setTimeout(() => {
+                const banner = document.getElementById('installBanner');
+                if (banner) banner.classList.add('show');
+            }, 3000);
+            console.log('✅ يمكن تثبيت التطبيق');
+        });
+
+        async function installPWA() {
+            if (!deferredPrompt) {
+                showToast('⚠️ التثبيت غير متاح', 'warning');
+                return;
+            }
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                showToast('✅ تم التثبيت! ابحث عن الأيقونة', 'success');
+                const banner = document.getElementById('installBanner');
+                if (banner) banner.classList.remove('show');
+            } else {
+                showToast('❌ تم إلغاء التثبيت', 'warning');
+            }
+            deferredPrompt = null;
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.style.display = 'none';
+        }
+
+        window.addEventListener('appinstalled', () => {
+            console.log('✅ تم تثبيت التطبيق');
+            showToast('🎉 استمتع بالتطبيق!', 'success');
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.style.display = 'none';
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker مسجل:', registration.scope);
+                        setInterval(() => { registration.update(); }, 3600000);
+                    })
+                    .catch(err => { console.warn('⚠️ فشل SW:', err); });
+            });
+        }
+
+        function dismissInstallBanner() {
+            const banner = document.getElementById('installBanner');
+            if (banner) banner.classList.remove('show');
+            try { localStorage.setItem('install_banner_dismissed', 'true'); } catch (e) {}
+        }
+
+        // ============================================================
+        // ===== WELCOME MESSAGE =====
+        // ============================================================
+        function showWelcomeIfFirstVisit() {
+            try {
+                if (!localStorage.getItem('has_visited')) {
+                    setTimeout(() => {
+                        const overlay = document.getElementById('welcomeOverlay');
+                        if (overlay) overlay.classList.add('active');
+                    }, 1500);
+                }
+            } catch (e) {}
+        }
+
+        function closeWelcome() {
+            const overlay = document.getElementById('welcomeOverlay');
+            if (overlay) overlay.classList.remove('active');
+            try {
+                localStorage.setItem('has_visited', 'true');
+                localStorage.setItem('first_visit', new Date().toISOString());
+            } catch (e) {}
+        }
+
+        // ============================================================
+        // ===== APP MODE =====
+        // ============================================================
+        function checkAppMode() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                                 window.navigator.standalone === true;
+            if (isStandalone) {
+                const badge = document.getElementById('appModeBadge');
+                if (badge) badge.classList.add('show');
+                const banner = document.getElementById('installBanner');
+                if (banner) banner.classList.remove('show');
+                console.log('🎉 التطبيق يعمل كتطبيق جوال');
+            }
+        }
+
+        // ============================================================
+        // ===== BADGE API =====
+        // ============================================================
+        function setAppBadge(count) {
+            try {
+                if ('setAppBadge' in navigator) {
+                    if (count > 0) navigator.setAppBadge(count);
+                    else navigator.clearAppBadge();
+                }
+            } catch (e) {}
+        }
+
+        // ============================================================
+        // ===== SOUND + VIBRATION =====
+        // ============================================================
+        function playNotificationSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+                oscillator.frequency.setValueAtTime(1100, audioCtx.currentTime + 0.15);
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {}
+        }
+
+        function vibrate() {
+            try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
+        }
+
+        // ============================================================
+        // ===== BROWSER NOTIFICATION =====
+        // ============================================================
+        async function requestNotificationPermission() {
+            try {
+                if (!('Notification' in window)) return false;
+                if (Notification.permission === 'granted') return true;
+                if (Notification.permission === 'denied') return false;
+                const permission = await Notification.requestPermission();
+                return permission === 'granted';
+            } catch (e) { return false; }
+        }
+
+        function showBrowserNotification(title, body, tag) {
+            try {
+                if (Notification.permission !== 'granted') return;
+                if (!document.hidden) return;
+                const notif = new Notification(title, {
+                    body: body,
+                    icon: './icon-192.png',
+                    badge: './icon-192.png',
+                    tag: tag || 'order',
+                    requireInteraction: true,
+                    dir: 'rtl',
+                    lang: 'ar'
+                });
+                notif.onclick = () => { window.focus(); openAdminDashboard(); notif.close(); };
+                setTimeout(() => notif.close(), 10000);
+            } catch (e) {}
+        }
+
+        // ============================================================
+        // ===== NEW ORDER ALERT =====
+        // ============================================================
+        function showNewOrderAlert(order) {
+            playNotificationSound();
+            vibrate();
+            setAppBadge(1);
+            const customerName = order.customerName || 'عميل';
+            const total = order.totalYER || 0;
+            showBrowserNotification('🔔 طلب جديد!', `${customerName} - ${total.toLocaleString()} ر.ي`, 'new-order-' + order.orderId);
+            
+            const notif = document.getElementById('newOrderNotif');
+            const title = document.getElementById('newOrderTitle');
+            const sub = document.getElementById('newOrderSub');
+            if (notif && title && sub) {
+                title.textContent = '🔔 طلب جديد!';
+                sub.textContent = `${customerName} - ${total.toLocaleString()} ر.ي`;
+                notif.classList.add('show');
+                setTimeout(() => notif.classList.remove('show'), 8000);
+            }
+            console.log('🎉 طلب جديد:', order);
+        }
+
+        // ============================================================
+        // ===== TRACK USAGE =====
+        // ============================================================
+        function trackAppUsage() {
+            try {
+                const usage = JSON.parse(localStorage.getItem('app_usage') || '{}');
+                usage.visits = (usage.visits || 0) + 1;
+                usage.lastVisit = new Date().toISOString();
+                if (!usage.firstVisit) usage.firstVisit = new Date().toISOString();
+                if (window.matchMedia('(display-mode: standalone)').matches) {
+                    usage.appOpens = (usage.appOpens || 0) + 1;
+                    usage.lastAppOpen = new Date().toISOString();
+                }
+                localStorage.setItem('app_usage', JSON.stringify(usage));
+            } catch (e) {}
+        }
+
+        // ============================================================
+        // ===== CHECK NEW ORDERS =====
+        // ============================================================
+        let lastOrderCount = 0;
+        let lastCheckedOrderId = null;
+        let orderCheckTimer = null;
+
+        async function checkForNewOrders() {
+            if (!isTokenValid()) return;
+            try {
+                const result = await apiCall({ action: 'getOrders', token: currentToken });
+                if (!result.success || !Array.isArray(result.orders)) return;
+                const pendingOrders = result.orders.filter(o => o.status === 'pending');
+                const currentCount = pendingOrders.length;
+                
+                if (lastOrderCount === 0 && currentCount > 0) {
+                    lastOrderCount = currentCount;
+                    if (pendingOrders[0]) lastCheckedOrderId = pendingOrders[0].orderId;
+                    setAppBadge(currentCount);
+                    return;
+                }
+                
+                if (currentCount > lastOrderCount) {
+                    const newestOrder = pendingOrders[0];
+                    if (newestOrder && newestOrder.orderId !== lastCheckedOrderId) {
+                        lastCheckedOrderId = newestOrder.orderId;
+                        showNewOrderAlert(newestOrder);
+                        await refreshOrders();
+                    }
+                }
+                lastOrderCount = currentCount;
+                setAppBadge(currentCount);
+            } catch (e) {}
+        }
+
+        function startOrderPolling() {
+            stopOrderPolling();
+            orderCheckTimer = setInterval(checkForNewOrders, 30000);
+            setTimeout(checkForNewOrders, 5000);
+        }
+
+        function stopOrderPolling() {
+            if (orderCheckTimer) { clearInterval(orderCheckTimer); orderCheckTimer = null; }
+        }
+
+        // ============================================================
         // ===== INIT =====
         // ============================================================
         window.onload = function() {
@@ -2635,72 +2960,36 @@
             loadReviews();
             startAutoRefresh();
             if (isTokenValid()) updateSessionTimer();
+            
+            // ✅ الميزات الجديدة
+            showWelcomeIfFirstVisit();
+            checkAppMode();
+            trackAppUsage();
+            
+            if (isTokenValid()) {
+                startOrderPolling();
+                requestNotificationPermission();
+            }
         };
-// ============================================================
-// ===== PWA - التثبيت والتسجيل =====
-// ============================================================
-let deferredPrompt = null;
 
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) installBtn.style.display = 'flex';
-    console.log('✅ يمكن تثبيت التطبيق');
-});
+        // ✅ طلب الإذن بعد تسجيل الدخول
+        const _origVerify = verifyAdminPassword;
+        verifyAdminPassword = async function() {
+            await _origVerify.apply(this, arguments);
+            if (isTokenValid()) {
+                await requestNotificationPermission();
+                startOrderPolling();
+            }
+        };
 
-async function installPWA() {
-    if (!deferredPrompt) {
-        showToast('⚠️ التثبيت غير متاح', 'warning');
-        return;
-    }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-        showToast('✅ تم التثبيت! ابحث عن الأيقونة', 'success');
-    } else {
-        showToast('❌ تم إلغاء التثبيت', 'warning');
-    }
-    deferredPrompt = null;
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) installBtn.style.display = 'none';
-}
+        // ✅ مؤشر عدم الاتصال
+        window.addEventListener('online', () => showToast('✅ عاد الاتصال', 'success'));
+        window.addEventListener('offline', () => showToast('📴 انقطع الاتصال', 'warning'));
 
-window.addEventListener('appinstalled', () => {
-    console.log('✅ تم تثبيت التطبيق');
-    showToast('🎉 استمتع بالتطبيق!', 'success');
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) installBtn.style.display = 'none';
-});
-
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-            .then(registration => {
-                console.log('✅ Service Worker مسجل:', registration.scope);
-                setInterval(() => {
-                    registration.update();
-                }, 3600000);
-            })
-            .catch(err => {
-                console.warn('⚠️ فشل تسجيل Service Worker:', err);
-            });
-    });
-}
-
-// ===== مؤشر عدم الاتصال =====
-window.addEventListener('online', () => {
-    showToast('✅ عاد الاتصال بالإنترنت', 'success');
-});
-
-window.addEventListener('offline', () => {
-    showToast('📴 انقطع الاتصال بالإنترنت', 'warning');
-});
-
-        
         window.addEventListener('beforeunload', () => {
             stopAutoRefresh();
             stopSessionTimer();
+            stopOrderPolling();
         });
     </script>
 </body>
