@@ -1,7 +1,7 @@
 // ============================================================
 // ===== Service Worker - متجر طالب الله =====
 // ============================================================
-const CACHE_NAME = 'taleb-store-v1';
+const CACHE_NAME = 'taleb-store-v2';
 const CACHE_URLS = [
     './',
     './index.html',
