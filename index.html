@@ -14,6 +14,7 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         :root {
             --bg-primary: #f0f2f5;
@@ -274,8 +275,8 @@
         .stat-card div { display: flex; flex-direction: column; }
         .stat-number { font-size: 1.4rem; font-weight: 800; color: var(--text-primary); }
         .stat-label { font-size: 0.75rem; color: var(--text-secondary); }
-        .dashboard-price-details, .dashboard-categories, .dashboard-recent, .dashboard-sold, .dashboard-exchange, .dashboard-customers, .dashboard-sales-details, .dashboard-orders, .dashboard-settings { background: var(--bg-primary); border-radius: var(--radius); padding: 18px; margin-bottom: 18px; }
-        .dashboard-price-details h3, .dashboard-categories h3, .dashboard-recent h3, .dashboard-sold h3, .dashboard-exchange h3, .dashboard-customers h3, .dashboard-sales-details h3, .dashboard-orders h3, .dashboard-settings h3 { color: var(--text-primary); font-size: 1.1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .dashboard-price-details, .dashboard-categories, .dashboard-recent, .dashboard-sold, .dashboard-exchange, .dashboard-customers, .dashboard-sales-details, .dashboard-orders, .dashboard-settings, .dashboard-charts { background: var(--bg-primary); border-radius: var(--radius); padding: 18px; margin-bottom: 18px; }
+        .dashboard-price-details h3, .dashboard-categories h3, .dashboard-recent h3, .dashboard-sold h3, .dashboard-exchange h3, .dashboard-customers h3, .dashboard-sales-details h3, .dashboard-orders h3, .dashboard-settings h3, .dashboard-charts h3 { color: var(--text-primary); font-size: 1.1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
         .price-detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
         .price-detail-item { background: var(--bg-card); border-radius: 12px; padding: 12px; text-align: center; }
         .price-detail-item .currency { font-size: 0.8rem; color: var(--text-secondary); }
@@ -350,6 +351,44 @@
         .review-item { background: var(--bg-primary); border-radius: 12px; padding: 15px 20px; flex: 1 1 250px; border-right: 4px solid var(--rating-gold); }
         .rating-submit-btn { display: block; margin: 10px auto 0; padding: 10px 30px; background: var(--primary); color: #fff; border: none; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; }
 
+        /* 🆕 Chart Styles */
+        .chart-container {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            min-height: 250px;
+        }
+        .chart-container h4 {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .chart-container.half { min-height: 280px; }
+        .chart-container canvas { max-height: 220px; }
+        @media (max-width: 700px) {
+            .chart-row { grid-template-columns: 1fr; }
+        }
+
+        /* 🆕 Reviews Styles */
+        .product-reviews-section { margin-top: 20px; border-top: 2px solid var(--bg-primary); padding-top: 15px; }
+        .product-reviews-section h3 {
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .reviews-list { max-height: 180px; overflow-y: auto; margin-bottom: 12px; }
+        .add-review-box { background: var(--bg-primary); border-radius: 12px; padding: 12px; }
+
         footer { text-align: center; margin-top: 20px; color: var(--text-secondary); font-size: 0.9rem; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 20px; }
         footer .footer-dev strong { color: var(--primary); }
 
@@ -357,7 +396,6 @@
         .live-indicator .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        /* ===== INSTALL BANNER ===== */
         .install-banner { position: fixed; top: 70px; left: 10px; right: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; padding: 14px 18px; border-radius: 16px; box-shadow: 0 8px 30px rgba(37,99,235,0.4); z-index: 999; display: none; align-items: center; gap: 12px; animation: slideDownBanner 0.5s ease; }
         .install-banner.show { display: flex; }
         .install-banner i.banner-icon { font-size: 1.8rem; color: #fbbf24; }
@@ -367,7 +405,6 @@
         .install-banner .close-banner { background: rgba(255,255,255,0.2); color: #fff; padding: 6px 10px; font-size: 0.9rem; }
         @keyframes slideDownBanner { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ===== WELCOME MODAL ===== */
         .welcome-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .welcome-overlay.active { display: flex; }
         .welcome-box { background: var(--bg-card); max-width: 400px; width: 100%; border-radius: 28px; padding: 32px 26px; text-align: center; box-shadow: 0 40px 100px rgba(0,0,0,0.4); animation: slideUp 0.4s ease; }
@@ -380,7 +417,6 @@
         .welcome-btn { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 8px 20px rgba(34,197,94,0.3); }
         .welcome-skip { background: transparent; border: none; color: var(--text-secondary); font-size: 0.85rem; margin-top: 12px; cursor: pointer; padding: 6px; }
 
-        /* ===== NEW ORDER NOTIFICATION ===== */
         .new-order-overlay { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-200px); background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; padding: 18px 24px; border-radius: 20px; z-index: 6000; display: flex; align-items: center; gap: 14px; box-shadow: 0 20px 60px rgba(34,197,94,0.5); transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 90vw; cursor: pointer; }
         .new-order-overlay.show { transform: translateX(-50%) translateY(0); }
         .new-order-overlay i { font-size: 2rem; animation: ring 1s infinite; }
@@ -389,7 +425,6 @@
         .new-order-overlay .new-order-sub { font-size: 0.8rem; opacity: 0.9; margin-top: 2px; }
         @keyframes ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
 
-        /* ===== APP MODE BADGE ===== */
         .app-mode-badge { position: fixed; bottom: 90px; right: 24px; background: var(--success); color: #fff; padding: 8px 14px; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 99; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(34,197,94,0.4); }
         .app-mode-badge.show { display: flex; }
         .app-mode-badge .dot-app { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 2s infinite; }
@@ -488,6 +523,14 @@
                 <input type="url" id="newImgUrl1" placeholder="https://example.com/image.jpg" />
             </div>
             <div class="form-group">
+                <label>📷 أو ارفع صورة من جهازك</label>
+                <input type="file" id="newImgFile" accept="image/*" onchange="handleImageUpload(this)" style="padding:8px; background:var(--bg-primary); border:2px solid #e2e8f0; border-radius:12px; width:100%;" />
+                <div id="uploadProgress" style="display:none; margin-top:8px; font-size:0.85rem; color:var(--primary); font-weight:600;">⏳ جاري رفع الصورة...</div>
+                <div id="uploadedImagePreview" style="margin-top:8px; display:none;">
+                    <img id="previewImg" style="max-width:100%; max-height:150px; border-radius:12px; border:2px solid var(--success);" />
+                </div>
+            </div>
+            <div class="form-group">
                 <label>وصف السلعة</label>
                 <textarea id="newDesc" rows="2" placeholder="وصف تفصيلي..."></textarea>
             </div>
@@ -514,7 +557,7 @@
         <div class="products-grid" id="productsGrid"></div>
     </div>
 
-    <!-- Modals -->
+    <!-- Product Modal -->
     <div class="modal-overlay" id="productModal">
         <div class="modal-box">
             <button class="modal-close" onclick="closeModal()">✕</button>
@@ -532,9 +575,34 @@
                     <i class="fas fa-shopping-bag"></i> شراء المنتج
                 </button>
             </div>
+
+            <!-- 🆕 قسم التقييمات -->
+            <div class="product-reviews-section">
+                <h3>
+                    <i class="fas fa-star" style="color:#fbbf24;"></i> التقييمات
+                    <span id="reviewsAverage" style="font-size:0.85rem; color:var(--text-secondary); font-weight:600;"></span>
+                </h3>
+                <div class="reviews-list" id="reviewsList"></div>
+                <div class="add-review-box">
+                    <div style="font-weight:700; color:var(--text-primary); margin-bottom:8px; font-size:0.9rem;">✍️ أضف تقييمك</div>
+                    <div class="rating-stars" id="productRatingStars" style="margin-bottom:8px;">
+                        <i class="fas fa-star" data-value="1" onclick="setProductRating(1)"></i>
+                        <i class="fas fa-star" data-value="2" onclick="setProductRating(2)"></i>
+                        <i class="fas fa-star" data-value="3" onclick="setProductRating(3)"></i>
+                        <i class="fas fa-star" data-value="4" onclick="setProductRating(4)"></i>
+                        <i class="fas fa-star" data-value="5" onclick="setProductRating(5)"></i>
+                    </div>
+                    <input type="text" id="reviewName" placeholder="اسمك (اختياري)" style="width:100%; padding:8px 12px; border:2px solid #e2e8f0; border-radius:10px; font-size:0.85rem; margin-bottom:6px; background:var(--bg-card); color:var(--text-primary);" />
+                    <textarea id="reviewComment" placeholder="اكتب تعليقك..." rows="2" style="width:100%; padding:8px 12px; border:2px solid #e2e8f0; border-radius:10px; font-size:0.85rem; background:var(--bg-card); color:var(--text-primary); font-family:inherit;"></textarea>
+                    <button onclick="submitProductReview()" style="width:100%; margin-top:8px; background:var(--primary); color:#fff; border:none; padding:10px; border-radius:30px; font-weight:700; cursor:pointer;">
+                        <i class="fas fa-paper-plane"></i> إرسال التقييم
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Qty Modal -->
     <div class="qty-modal-overlay" id="qtyModal">
         <div class="qty-modal-box">
             <button class="modal-close" onclick="closeQtyModal()">✕</button>
@@ -557,6 +625,7 @@
         </div>
     </div>
 
+    <!-- Cart Modal -->
     <div class="cart-modal-overlay" id="cartModal">
         <div class="cart-modal-box">
             <h2><i class="fas fa-shopping-cart"></i> سلة المشتريات</h2>
@@ -576,6 +645,7 @@
         </div>
     </div>
 
+    <!-- Checkout -->
     <div class="checkout-overlay" id="checkoutOverlay">
         <div class="checkout-box">
             <h2><i class="fas fa-file-invoice"></i> إتمام الطلب</h2>
@@ -593,7 +663,17 @@
             <input type="tel" id="customerPhone" placeholder="مثلاً: 712345678" />
             <label>📝 ملاحظات (اختياري)</label>
             <textarea id="customerNotes" rows="2" placeholder="أي تفاصيل إضافية..."></textarea>
-            
+
+            <!-- 🆕 كود الخصم -->
+            <label>🎟️ كود الخصم (اختياري)</label>
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="couponCode" placeholder="أدخل كود الخصم..." style="flex:1; text-transform:uppercase;" />
+                <button type="button" onclick="applyCoupon()" style="background:var(--primary); color:#fff; border:none; padding:10px 18px; border-radius:12px; font-weight:700; cursor:pointer;">
+                    <i class="fas fa-check"></i> تطبيق
+                </button>
+            </div>
+            <div id="couponMessage" style="margin-top:6px; font-size:0.85rem; display:none;"></div>
+
             <div class="payment-box" id="paymentBox">
                 <div class="payment-box-header" onclick="togglePaymentBox()">
                     <span><i class="fas fa-credit-card"></i> طريقة الدفع</span>
@@ -632,7 +712,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <button class="checkout-submit" onclick="submitOrder()" id="checkoutSubmitBtn">
                 <i class="fas fa-check-circle"></i> تأكيد الطلب
             </button>
@@ -642,6 +722,7 @@
         </div>
     </div>
 
+    <!-- Admin Login -->
     <div class="admin-login-overlay" id="adminLoginOverlay">
         <div class="admin-login-box">
             <h2><i class="fas fa-lock"></i> لوحة التحكم الخاصة</h2>
@@ -664,6 +745,7 @@
         </div>
     </div>
 
+    <!-- Admin Dashboard -->
     <div class="admin-dashboard-overlay" id="adminDashboardOverlay">
         <div class="admin-dashboard-box">
             <div class="dashboard-header">
@@ -690,7 +772,6 @@
                     <span class="orders-count hidden" id="ordersCount">0</span>
                 </h3>
                 <div id="pendingOrdersList"></div>
-                
                 <button class="orders-toggle-btn" id="confirmedToggleBtn" onclick="toggleConfirmedOrders()">
                     <span>✅ الطلبات المؤكدة (<span id="confirmedCount">0</span>)</span>
                     <i class="fas fa-chevron-down arrow"></i>
@@ -730,6 +811,25 @@
                 <div class="stat-card" onclick="showCustomers()">
                     <i class="fas fa-users"></i>
                     <div><span class="stat-number" id="statTotalCustomers">0</span><span class="stat-label">عملاء</span></div>
+                </div>
+            </div>
+
+            <!-- 🆕 الرسوم البيانية -->
+            <div class="dashboard-charts" id="chartsSection">
+                <h3><i class="fas fa-chart-line"></i> تقارير المبيعات (آخر 30 يوم)</h3>
+                <div class="chart-container">
+                    <h4>📈 المبيعات اليومية</h4>
+                    <canvas id="dailySalesChart"></canvas>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-container half">
+                        <h4>🏆 الأكثر مبيعاً</h4>
+                        <canvas id="topProductsChart"></canvas>
+                    </div>
+                    <div class="chart-container half">
+                        <h4>📂 المبيعات حسب القسم</h4>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -808,7 +908,6 @@
 
             <div class="dashboard-settings">
                 <h3><i class="fas fa-cog"></i> الإعدادات</h3>
-                
                 <div class="settings-group">
                     <h4><i class="fas fa-image"></i> معلومات المتجر</h4>
                     <div class="settings-field">
@@ -827,7 +926,6 @@
                         <i class="fas fa-save"></i> حفظ الإعدادات
                     </button>
                 </div>
-
                 <div class="settings-group">
                     <h4><i class="fas fa-link"></i> الروابط الأساسية</h4>
                     <div class="settings-info">
@@ -920,7 +1018,6 @@
 
     <div class="toast" id="toast"></div>
 
-    <!-- ===== INSTALL BANNER ===== -->
     <div class="install-banner" id="installBanner">
         <i class="fas fa-download banner-icon"></i>
         <div class="banner-text">
@@ -931,7 +1028,6 @@
         <button class="close-banner" onclick="dismissInstallBanner()">✕</button>
     </div>
 
-    <!-- ===== WELCOME MODAL ===== -->
     <div class="welcome-overlay" id="welcomeOverlay">
         <div class="welcome-box">
             <div class="welcome-icon">🏪</div>
@@ -947,7 +1043,6 @@
         </div>
     </div>
 
-    <!-- ===== NEW ORDER NOTIFICATION ===== -->
     <div class="new-order-overlay" id="newOrderNotif" onclick="openAdminDashboard()">
         <i class="fas fa-bell"></i>
         <div class="new-order-text">
@@ -956,7 +1051,6 @@
         </div>
     </div>
 
-    <!-- ===== APP MODE BADGE ===== -->
     <div class="app-mode-badge" id="appModeBadge">
         <span class="dot-app"></span>
         <span>وضع التطبيق</span>
@@ -966,12 +1060,13 @@
         <p>جميع الحقوق محفوظة لمتجر طالب الله &copy; 2026</p>
         <p class="footer-dev">تم التطوير بواسطة <strong>سامي المجيدي</strong> 🚀</p>
     </footer>
+
     <script>
         // ============================================================
         // ===== CONFIG =====
         // ============================================================
         const DEFAULT_CONFIG = {
-            SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyA_P2TlPWEb-RrhbOBBi0WhjLNKwA-UICf8lIuc2G7-XKUhSD2csIbZsxVJtTZ9Uph5w/exec",
+            SCRIPT_URL: "https://script.google.com/macros/s/AKfycbykpPKU97naaKy5zJOQcWv6uYWhrZJ3MFxTsa7K-bamhfAf_bHR_8AIncJeLyK-r12qKg/exec",
             WHATSAPP_NUMBER: "967773704939",
             STORE_NAME: "متجر طالب الله",
             LOGO_URL: "https://i.ibb.co/99BC57HN/logo.png",
@@ -1016,6 +1111,11 @@
         let lastOrderCount = 0;
         let lastCheckedOrderId = null;
         let orderCheckTimer = null;
+        let appliedCoupon = null;
+        let currentProductRating = 0;
+        let dailyChart = null;
+        let topProductsChart = null;
+        let categoryChart = null;
 
         const EXCHANGE_RATES = { 'ر.ي': 1, '$': 1600, 'ر.س': 410 };
 
@@ -1429,6 +1529,7 @@
             loadSalesHistory();
             updateDashboardData();
             await refreshOrders();
+            loadSalesCharts();
         }
         function closeAdminDashboard() {
             document.getElementById('adminDashboardOverlay').classList.remove('active');
@@ -1438,6 +1539,92 @@
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
+        }
+
+        // ============================================================
+        // ===== 🆕 SALES CHARTS =====
+        // ============================================================
+        async function loadSalesCharts() {
+            if (!isTokenValid()) return;
+            try {
+                const res = await fetch(SCRIPT_URL + '?action=salesChart&token=' + encodeURIComponent(currentToken));
+                const data = await res.json();
+                if (!data.success) return;
+
+                const dailyCtx = document.getElementById('dailySalesChart');
+                if (dailyCtx) {
+                    if (dailyChart) dailyChart.destroy();
+                    dailyChart = new Chart(dailyCtx, {
+                        type: 'line',
+                        data: {
+                            labels: data.daily.map(d => d.date.slice(5)),
+                            datasets: [{
+                                label: 'المبيعات (ر.ي)',
+                                data: data.daily.map(d => d.total),
+                                borderColor: '#2563eb',
+                                backgroundColor: 'rgba(37,99,235,0.15)',
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#2563eb'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString() } } }
+                        }
+                    });
+                }
+
+                const topCtx = document.getElementById('topProductsChart');
+                if (topCtx) {
+                    if (topProductsChart) topProductsChart.destroy();
+                    topProductsChart = new Chart(topCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.topProducts.map(p => p.name.length > 15 ? p.name.slice(0, 15) + '...' : p.name),
+                            datasets: [{
+                                label: 'الكمية المباعة',
+                                data: data.topProducts.map(p => p.quantity),
+                                backgroundColor: ['#22c55e', '#2563eb', '#f59e0b', '#ef4444', '#8b5cf6'],
+                                borderRadius: 8
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: { y: { beginAtZero: true } }
+                        }
+                    });
+                }
+
+                const catCtx = document.getElementById('categoryChart');
+                if (catCtx) {
+                    if (categoryChart) categoryChart.destroy();
+                    categoryChart = new Chart(catCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.byCategory.map(c => c.name),
+                            datasets: [{
+                                data: data.byCategory.map(c => c.total),
+                                backgroundColor: ['#2563eb', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { font: { size: 10 } } }
+                            }
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('loadSalesCharts error:', err);
+            }
         }
 
         // ============================================================
@@ -1457,14 +1644,23 @@
             isRefreshing = true;
             try {
                 const productsData = await fetchProductsAPI();
-                if (!Array.isArray(productsData)) throw new Error('بيانات غير صالحة');
+                if (!Array.isArray(productsData)) {
+                    console.warn('silentRefresh: بيانات غير صالحة، تم تجاهل التحديث');
+                    return;
+                }
+                if (productsData.length === 0 && products.length > 0) {
+                    console.warn('silentRefresh: مصفوفة فارغة، تم تجاهل التحديث');
+                    return;
+                }
                 products = productsData.reverse().map(p => ({ ...p, stock: p.stock !== undefined && p.stock !== '' ? Number(p.stock) : 0 }));
                 loadSalesHistory();
                 if (document.getElementById('adminDashboardOverlay').classList.contains('active')) {
                     renderProducts(currentCategory);
                     updateDashboardData();
                 }
-            } catch (err) { }
+            } catch (err) {
+                console.error('silentRefresh error:', err);
+            }
             finally { isRefreshing = false; }
         }
         function manualRefresh() {
@@ -1537,7 +1733,55 @@
         }
 
         // ============================================================
-        // ===== RATING =====
+        // ===== 🆕 IMAGE UPLOAD =====
+        // ============================================================
+        async function handleImageUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showToast('⚠️ الرجاء اختيار صورة صالحة', 'warning');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('⚠️ حجم الصورة كبير جداً (الحد الأقصى 5MB)', 'warning');
+                return;
+            }
+            if (!isTokenValid()) {
+                showToast('🔒 سجل الدخول أولاً', 'warning');
+                return;
+            }
+
+            const progress = document.getElementById('uploadProgress');
+            const previewBox = document.getElementById('uploadedImagePreview');
+            const previewImg = document.getElementById('previewImg');
+            progress.style.display = 'block';
+            previewBox.style.display = 'none';
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64 = e.target.result;
+                const fileName = 'product_' + Date.now();
+                const result = await apiCall({
+                    action: 'uploadImage',
+                    token: currentToken,
+                    imageData: base64,
+                    fileName: fileName
+                });
+                progress.style.display = 'none';
+                if (result.success) {
+                    document.getElementById('newImgUrl1').value = result.thumbnailUrl || result.directUrl;
+                    previewImg.src = result.thumbnailUrl || result.directUrl;
+                    previewBox.style.display = 'block';
+                    showToast('✅ تم رفع الصورة بنجاح', 'success');
+                } else {
+                    showToast('❌ ' + (result.error || 'فشل رفع الصورة'), 'error');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ============================================================
+        // ===== RATING (Service) =====
         // ============================================================
         function toggleRatingContent() {
             const content = document.getElementById('ratingContent');
@@ -1584,6 +1828,113 @@
         }
 
         // ============================================================
+        // ===== 🆕 PRODUCT REVIEWS =====
+        // ============================================================
+        function setProductRating(v) {
+            currentProductRating = v;
+            document.querySelectorAll('#productRatingStars i').forEach(star => {
+                star.style.color = parseInt(star.dataset.value) <= v ? '#fbbf24' : '#d1d5db';
+            });
+        }
+
+        async function loadProductReviews(productTitle) {
+            const listEl = document.getElementById('reviewsList');
+            const avgEl = document.getElementById('reviewsAverage');
+            if (!listEl) return;
+            listEl.innerHTML = '<p style="color:var(--text-secondary); font-size:0.85rem; text-align:center;">⏳ جاري التحميل...</p>';
+
+            const result = await apiCall({ action: 'getReviews', productTitle: productTitle });
+            if (result.success && result.reviews) {
+                avgEl.textContent = result.count > 0 ? `(${result.average} ⭐ من ${result.count} تقييم)` : '(لا توجد تقييمات)';
+                if (result.reviews.length === 0) {
+                    listEl.innerHTML = '<p style="color:var(--text-secondary); font-size:0.85rem; text-align:center; padding:10px;">لا توجد تقييمات بعد. كن أول من يقيّم!</p>';
+                    return;
+                }
+                let html = '';
+                result.reviews.forEach(r => {
+                    const stars = '⭐'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+                    html += `<div style="background:var(--bg-primary); border-radius:10px; padding:10px 12px; margin-bottom:8px; border-right:3px solid #fbbf24;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="color:var(--text-primary); font-size:0.85rem;">${escapeHTML(r.customerName)}</strong>
+                            <span style="color:#fbbf24; font-size:0.75rem;">${stars}</span>
+                        </div>
+                        ${r.comment ? `<div style="color:var(--text-secondary); font-size:0.82rem; margin-top:4px;">${escapeHTML(r.comment)}</div>` : ''}
+                        <div style="color:var(--text-secondary); font-size:0.7rem; margin-top:4px;">📅 ${escapeHTML(r.date)}</div>
+                    </div>`;
+                });
+                listEl.innerHTML = html;
+            } else {
+                listEl.innerHTML = '<p style="color:var(--text-secondary); font-size:0.85rem; text-align:center;">تعذر تحميل التقييمات</p>';
+            }
+        }
+
+        async function submitProductReview() {
+            if (!currentModalProduct) return;
+            if (currentProductRating === 0) {
+                showToast('⚠️ اختر عدد النجوم', 'warning');
+                return;
+            }
+            const name = document.getElementById('reviewName').value.trim() || 'زائر';
+            const comment = document.getElementById('reviewComment').value.trim();
+
+            const result = await apiCall({
+                action: 'addReview',
+                productTitle: currentModalProduct.title,
+                customerName: name,
+                rating: currentProductRating,
+                comment: comment
+            });
+
+            if (result.success) {
+                showToast('✅ تم إرسال تقييمك. شكراً لك!', 'success');
+                document.getElementById('reviewName').value = '';
+                document.getElementById('reviewComment').value = '';
+                setProductRating(0);
+                currentProductRating = 0;
+                loadProductReviews(currentModalProduct.title);
+            } else {
+                showToast('❌ ' + (result.error || 'فشل الإرسال'), 'error');
+            }
+        }
+
+        // ============================================================
+        // ===== 🆕 COUPONS =====
+        // ============================================================
+        async function applyCoupon() {
+            const code = document.getElementById('couponCode').value.trim().toUpperCase();
+            const msgEl = document.getElementById('couponMessage');
+            if (!code) {
+                msgEl.textContent = '⚠️ أدخل كود الخصم';
+                msgEl.style.color = 'var(--warning)';
+                msgEl.style.display = 'block';
+                return;
+            }
+            msgEl.textContent = '⏳ جاري التحقق...';
+            msgEl.style.color = 'var(--primary)';
+            msgEl.style.display = 'block';
+
+            const result = await apiCall({ action: 'validateCoupon', code: code });
+            if (result.success && result.coupon) {
+                appliedCoupon = result.coupon;
+                const c = result.coupon;
+                const label = c.type === 'percent' ? `${c.value}%` : `${c.value} ر.ي`;
+                msgEl.textContent = `✅ تم تطبيق الكوبون: خصم ${label}`;
+                msgEl.style.color = 'var(--success)';
+            } else {
+                appliedCoupon = null;
+                msgEl.textContent = '❌ ' + (result.error || 'كوبون غير صالح');
+                msgEl.style.color = 'var(--danger)';
+            }
+        }
+
+        function calculateDiscount(totalYER) {
+            if (!appliedCoupon) return 0;
+            if (appliedCoupon.minOrder > 0 && totalYER < appliedCoupon.minOrder) return 0;
+            if (appliedCoupon.type === 'percent') return Math.round(totalYER * appliedCoupon.value / 100);
+            return appliedCoupon.value;
+        }
+
+        // ============================================================
         // ===== FETCH PRODUCTS =====
         // ============================================================
         async function fetchProducts(isSilent = false) {
@@ -1607,8 +1958,9 @@
                 updateDashboardData();
                 loadReviews();
             } catch (err) {
+                console.error('fetchProducts error:', err);
                 if (!isSilent) {
-                    gridEl.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--danger); padding:30px;">❌ فشل التحميل.</p>';
+                    gridEl.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--danger); padding:30px;">❌ فشل التحميل. تحقق من اتصالك بالإنترنت.</p>';
                 }
             }
         }
@@ -1708,6 +2060,9 @@
             document.getElementById('modalDesc').textContent = product.description || 'لا يوجد وصف.';
             document.getElementById('modalPrice').textContent = product.price || '0';
             document.getElementById('modalStock').textContent = stock > 0 ? `🟢 متبقي: ${stock}` : '🔴 نفد المخزون';
+            setProductRating(0);
+            currentProductRating = 0;
+            loadProductReviews(product.title);
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -1950,6 +2305,11 @@
             if (branchEl) { branchEl.innerHTML = '<option value="">-- اختر البنك أولاً --</option>'; branchEl.disabled = true; }
             const paymentBox = document.getElementById('paymentBox');
             if (paymentBox) paymentBox.classList.remove('open');
+            appliedCoupon = null;
+            const couponEl = document.getElementById('couponCode');
+            if (couponEl) couponEl.value = '';
+            const msgEl = document.getElementById('couponMessage');
+            if (msgEl) msgEl.style.display = 'none';
             const overlay = document.getElementById('checkoutOverlay');
             if (overlay) overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -2005,13 +2365,18 @@
             let totalYER = 0;
             items.forEach(item => { totalYER += convertToYER(item.price) * item.quantity; });
 
+            const discount = calculateDiscount(totalYER);
+            const finalTotal = Math.max(0, totalYER - discount);
+
             const orderData = {
                 action: 'createOrder',
                 customerName, customerCity, customerBank, customerBranch,
                 customerAccount, customerPhone, customerNotes, items,
-                totalYER: Math.round(totalYER),
-                totalUSD: (totalYER / EXCHANGE_RATES['$']).toFixed(2),
-                totalSAR: Math.round(totalYER / EXCHANGE_RATES['ر.س'])
+                totalYER: Math.round(finalTotal),
+                totalUSD: (finalTotal / EXCHANGE_RATES['$']).toFixed(2),
+                totalSAR: Math.round(finalTotal / EXCHANGE_RATES['ر.س']),
+                couponCode: appliedCoupon ? appliedCoupon.code : '',
+                discount: discount
             };
 
             const btn = document.getElementById('checkoutSubmitBtn');
@@ -2055,6 +2420,11 @@
             const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
             const timeStr = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
 
+            let discountRow = '';
+            if (data.discount > 0) {
+                discountRow = `<div class="invoice-total-row" style="color:#22c55e;"><span>🎟️ الخصم (${escapeHTML(data.couponCode)}):</span><span>- ${data.discount.toLocaleString()} ر.ي</span></div>`;
+            }
+
             const html = `
                 <div class="invoice-modal-box">
                     <div class="invoice-top">
@@ -2086,6 +2456,7 @@
                         </table>
                     </div>
                     <div class="invoice-totals">
+                        ${discountRow}
                         <div class="invoice-total-row main"><span>💰 الإجمالي:</span><span>${data.totalYER.toLocaleString()} ر.ي</span></div>
                         <div class="invoice-total-row"><span>💵 بالدولار:</span><span>$${data.totalUSD}</span></div>
                         <div class="invoice-total-row"><span>💵 بالريال السعودي:</span><span>${data.totalSAR} ر.س</span></div>
@@ -2130,7 +2501,11 @@
                 itemsText += `${i+1}. ${item.title} × ${item.quantity} = ${item.price}\n`;
             });
             const now = new Date();
-            const msg = `🧾 *فاتورة طلب جديدة*\n━━━━━━━━━━━━━━━━━\n\n📋 رقم الفاتورة: ${orderId}\n📅 اليوم: ${now.toLocaleDateString('ar-EG', { weekday: 'long' })}\n🗓️ التاريخ: ${now.toLocaleDateString('ar-EG')}\n⏰ الوقت: ${now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}\n\n👤 *بيانات العميل:*\nالاسم: ${data.customerName}\n🏙️ المدينة: ${data.customerCity}\n🏦 البنك: ${data.customerBank}\n📍 الفرع: ${data.customerBranch}\n🔢 رقم الحساب: ${data.customerAccount}\n📱 الهاتف: ${data.customerPhone}\n${data.customerNotes ? `📝 ملاحظات: ${data.customerNotes}\n` : ''}\n━━━━━━━━━━━━━━━━━\n📦 *المنتجات:*\n${itemsText}\n━━━━━━━━━━━━━━━━━\n💰 *الإجمالي:*\n${data.totalYER.toLocaleString()} ر.ي\n$${data.totalUSD}\n${data.totalSAR} ر.س\n\n━━━━━━━━━━━━━━━━━\n⚠️ *ملاحظات رسمية:*\n1️⃣ المنتج لا يُرجَع بعد تأكيد الطلب.\n2️⃣ يجب دفع وإرسال صورة الحوالة قبل الشحن.\n\n━━━━━━━━━━━━━━━━━\n🏪 ${STORE_NAME}`;
+            let discountText = '';
+            if (data.discount > 0) {
+                discountText = `🎟️ الخصم (${data.couponCode}): -${data.discount.toLocaleString()} ر.ي\n`;
+            }
+            const msg = `🧾 *فاتورة طلب جديدة*\n━━━━━━━━━━━━━━━━━\n\n📋 رقم الفاتورة: ${orderId}\n📅 اليوم: ${now.toLocaleDateString('ar-EG', { weekday: 'long' })}\n🗓️ التاريخ: ${now.toLocaleDateString('ar-EG')}\n⏰ الوقت: ${now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}\n\n👤 *بيانات العميل:*\nالاسم: ${data.customerName}\n🏙️ المدينة: ${data.customerCity}\n🏦 البنك: ${data.customerBank}\n📍 الفرع: ${data.customerBranch}\n🔢 رقم الحساب: ${data.customerAccount}\n📱 الهاتف: ${data.customerPhone}\n${data.customerNotes ? `📝 ملاحظات: ${data.customerNotes}\n` : ''}\n━━━━━━━━━━━━━━━━━\n📦 *المنتجات:*\n${itemsText}\n━━━━━━━━━━━━━━━━━\n${discountText}💰 *الإجمالي:*\n${data.totalYER.toLocaleString()} ر.ي\n$${data.totalUSD}\n${data.totalSAR} ر.س\n\n━━━━━━━━━━━━━━━━━\n⚠️ *ملاحظات رسمية:*\n1️⃣ المنتج لا يُرجَع بعد تأكيد الطلب.\n2️⃣ يجب دفع وإرسال صورة الحوالة قبل الشحن.\n\n━━━━━━━━━━━━━━━━━\n🏪 ${STORE_NAME}`;
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
@@ -2235,6 +2610,7 @@
                 await fetchProducts(true);
                 const statsData = await fetchStatsAPI(currentToken);
                 if (statsData) { dashboardStats = statsData; updateDashboardData(); }
+                loadSalesCharts();
             } else {
                 showToast('❌ ' + (result.error || 'فشل'), 'error');
             }
@@ -2550,6 +2926,8 @@
                     if (el) el.value = '';
                 });
                 document.getElementById('newStock').value = '10';
+                document.getElementById('uploadedImagePreview').style.display = 'none';
+                document.getElementById('newImgFile').value = '';
                 document.getElementById('adminPanel').style.display = 'none';
                 setTimeout(() => fetchProducts(true), 1500);
             } else {
@@ -2565,7 +2943,7 @@
         }
 
         // ============================================================
-        // ===== PWA: INSTALL =====
+        // ===== PWA =====
         // ============================================================
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -2576,7 +2954,6 @@
                 const banner = document.getElementById('installBanner');
                 if (banner && !localStorage.getItem('install_banner_dismissed')) banner.classList.add('show');
             }, 3000);
-            console.log('✅ يمكن تثبيت التطبيق');
         });
 
         async function installPWA() {
@@ -2599,7 +2976,6 @@
         }
 
         window.addEventListener('appinstalled', () => {
-            console.log('✅ تم تثبيت التطبيق');
             showToast('🎉 استمتع بالتطبيق!', 'success');
             const installBtn = document.getElementById('installBtn');
             if (installBtn) installBtn.style.display = 'none';
@@ -2609,7 +2985,6 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
                     .then(registration => {
-                        console.log('✅ Service Worker مسجل:', registration.scope);
                         setInterval(() => { registration.update(); }, 3600000);
                     })
                     .catch(err => { console.warn('⚠️ فشل SW:', err); });
@@ -2623,7 +2998,7 @@
         }
 
         // ============================================================
-        // ===== WELCOME MESSAGE =====
+        // ===== WELCOME =====
         // ============================================================
         function showWelcomeIfFirstVisit() {
             try {
@@ -2656,7 +3031,6 @@
                 if (badge) badge.classList.add('show');
                 const banner = document.getElementById('installBanner');
                 if (banner) banner.classList.remove('show');
-                console.log('🎉 التطبيق يعمل كتطبيق جوال');
             }
         }
 
@@ -2696,7 +3070,7 @@
         }
 
         // ============================================================
-        // ===== BROWSER NOTIFICATION =====
+        // ===== NOTIFICATIONS =====
         // ============================================================
         async function requestNotificationPermission() {
             try {
@@ -2745,24 +3119,6 @@
                 notif.classList.add('show');
                 setTimeout(() => notif.classList.remove('show'), 8000);
             }
-            console.log('🎉 طلب جديد:', order);
-        }
-
-        // ============================================================
-        // ===== TRACK USAGE =====
-        // ============================================================
-        function trackAppUsage() {
-            try {
-                const usage = JSON.parse(localStorage.getItem('app_usage') || '{}');
-                usage.visits = (usage.visits || 0) + 1;
-                usage.lastVisit = new Date().toISOString();
-                if (!usage.firstVisit) usage.firstVisit = new Date().toISOString();
-                if (window.matchMedia('(display-mode: standalone)').matches) {
-                    usage.appOpens = (usage.appOpens || 0) + 1;
-                    usage.lastAppOpen = new Date().toISOString();
-                }
-                localStorage.setItem('app_usage', JSON.stringify(usage));
-            } catch (e) {}
         }
 
         // ============================================================
@@ -2839,7 +3195,6 @@
         document.addEventListener('visibilitychange', () => { if (!document.hidden) silentRefresh(); });
         window.addEventListener('focus', () => silentRefresh());
 
-        // مؤشر عدم الاتصال
         window.addEventListener('online', () => showToast('✅ عاد الاتصال', 'success'));
         window.addEventListener('offline', () => showToast('📴 انقطع الاتصال', 'warning'));
 
@@ -2860,7 +3215,6 @@
             if (isTokenValid()) updateSessionTimer();
             showWelcomeIfFirstVisit();
             checkAppMode();
-            trackAppUsage();
             if (isTokenValid()) {
                 startOrderPolling();
                 requestNotificationPermission();
