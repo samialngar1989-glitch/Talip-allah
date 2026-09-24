@@ -3227,5 +3227,312 @@
             stopOrderPolling();
         });
     </script>
+    <!-- ═══════════════════════════════════════════════════════════ -->
+<!-- 🎁 زر "عن المطور" — يمكن إضافته لأي تطبيق                  -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<!-- الزر العائم -->
+<button id="devInfoBtn" title="عن المطور" style="
+  position:fixed;
+  bottom:80px;
+  left:20px;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  border:none;
+  background:linear-gradient(135deg,#fbbf24,#d97706);
+  color:#fff;
+  cursor:pointer;
+  font-size:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 20px rgba(217,119,6,.4);
+  z-index:9998;
+  transition:all .3s;
+  animation:pulseDev 2s infinite;
+">
+  <i class="fas fa-user-tie"></i>
+</button>
+
+<style>
+  @keyframes pulseDev {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  #devInfoBtn:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 28px rgba(217,119,6,.6);
+  }
+  #devModal {
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(6px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+    padding:20px;
+    overflow-y:auto;
+  }
+  #devModal.active { display:flex; }
+  #devModal .dev-card {
+    background:#fff;
+    border-radius:16px;
+    width:100%;
+    max-width:520px;
+    max-height:90vh;
+    overflow-y:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+    animation:devSlide .3s ease;
+    direction:rtl;
+    font-family:'Tajawal','Segoe UI',sans-serif;
+  }
+  @keyframes devSlide {
+    from { opacity:0; transform:scale(.95) translateY(20px); }
+    to { opacity:1; transform:scale(1) translateY(0); }
+  }
+  #devModal .dev-header {
+    padding:18px 22px;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  #devModal .dev-header h2 {
+    margin:0;
+    font-size:18px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  #devModal .dev-close {
+    width:34px;height:34px;border-radius:50%;border:none;
+    background:rgba(255,255,255,.2);color:#fff;cursor:pointer;font-size:16px;
+    transition:all .2s;
+  }
+  #devModal .dev-close:hover { background:#ef4444; transform:rotate(90deg); }
+  #devModal .dev-body { padding:22px; }
+  
+  /* بطاقة المطور */
+  #devModal .dev-profile {
+    text-align:center;
+    padding:20px;
+    background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(168,85,247,.08));
+    border-radius:14px;
+    margin-bottom:18px;
+  }
+  #devModal .dev-avatar {
+    width:80px;height:80px;border-radius:50%;
+    background:linear-gradient(135deg,#fbbf24,#d97706);
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:38px;color:#fff;margin-bottom:12px;
+    box-shadow:0 8px 20px rgba(217,119,6,.3);
+  }
+  #devModal .dev-name { font-size:20px;font-weight:800;color:#0f172a;margin:0 0 4px; }
+  #devModal .dev-title { font-size:13px;color:#64748b;margin:0 0 12px; }
+  
+  /* معلومات التواصل */
+  #devModal .dev-contacts {
+    display:flex;flex-direction:column;gap:8px;
+    margin-bottom:18px;
+  }
+  #devModal .dev-contact-item {
+    display:flex;align-items:center;gap:12px;
+    padding:12px 15px;background:#f8fafc;
+    border-radius:10px;text-decoration:none;color:#0f172a;
+    border:1px solid #e2e8f0;transition:all .2s;font-size:14px;
+  }
+  #devModal .dev-contact-item:hover {
+    background:#fff;border-color:#2563eb;transform:translateX(-4px);
+    box-shadow:0 4px 12px rgba(37,99,235,.12);
+  }
+  #devModal .dev-contact-icon {
+    width:38px;height:38px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:16px;flex-shrink:0;
+  }
+  #devModal .ci-phone { background:linear-gradient(135deg,#22c55e,#15803d); }
+  #devModal .ci-whatsapp { background:linear-gradient(135deg,#25d366,#128c7e); }
+  #devModal .ci-email { background:linear-gradient(135deg,#ef4444,#b91c1c); }
+  
+  #devModal .dev-contact-text { flex:1; }
+  #devModal .dev-contact-label { font-size:11px;color:#64748b;margin:0; }
+  #devModal .dev-contact-value { font-size:14px;font-weight:700;margin:2px 0 0; }
+  
+  /* قسم التطبيقات */
+  #devModal .dev-apps-title {
+    font-size:15px;font-weight:800;color:#0f172a;
+    margin:0 0 10px;display:flex;align-items:center;gap:8px;
+  }
+  #devModal .dev-apps-title i { color:#2563eb; }
+  #devModal .dev-apps {
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    margin-bottom:18px;
+  }
+  @media (max-width:480px) {
+    #devModal .dev-apps { grid-template-columns:1fr; }
+  }
+  #devModal .dev-app-link {
+    display:flex;flex-direction:column;
+    padding:14px;background:#f8fafc;border:1px solid #e2e8f0;
+    border-radius:12px;text-decoration:none;color:#0f172a;
+    transition:all .2s;text-align:center;
+  }
+  #devModal .dev-app-link:hover {
+    background:#fff;border-color:#2563eb;
+    transform:translateY(-3px);
+    box-shadow:0 6px 16px rgba(37,99,235,.15);
+  }
+  #devModal .dev-app-icon {
+    width:48px;height:48px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;color:#fff;margin:0 auto 8px;
+  }
+  #devModal .dev-app-name { font-weight:700;font-size:13px;margin:0 0 3px; }
+  #devModal .dev-app-desc { font-size:11px;color:#64748b;margin:0; }
+  
+  /* الأيقونات الملونة */
+  #devModal .ai-roads { background:linear-gradient(135deg,#2563eb,#1d4ed8); }
+  #devModal .ai-build { background:linear-gradient(135deg,#f59e0b,#d97706); }
+  #devModal .ai-shop { background:linear-gradient(135deg,#22c55e,#15803d); }
+  #devModal .ai-mirath { background:linear-gradient(135deg,#a855f7,#7c3aed); }
+  #devModal .ai-translate { background:linear-gradient(135deg,#06b6d4,#0891b2); }
+  
+  /* التذييل */
+  #devModal .dev-footer {
+    text-align:center;padding:15px;
+    background:#f8fafc;border-radius:10px;
+    font-size:12px;color:#64748b;
+  }
+</style>
+
+<!-- النافذة المنبثقة -->
+<div id="devModal" onclick="if(event.target===this)closeDevModal()">
+  <div class="dev-card">
+    
+    <div class="dev-header">
+      <h2><i class="fas fa-user-tie"></i> عن المطور</h2>
+      <button class="dev-close" onclick="closeDevModal()">✕</button>
+    </div>
+    
+    <div class="dev-body">
+      
+      <!-- بطاقة المطور -->
+      <div class="dev-profile">
+        <div class="dev-avatar">👨‍💻</div>
+        <h3 class="dev-name">سامي المجيدي</h3>
+        <p class="dev-title">مهندس برمجة</p>
+      </div>
+      
+      <!-- معلومات التواصل -->
+      <h4 class="dev-apps-title"><i class="fas fa-address-card"></i> معلومات التواصل</h4>
+      <div class="dev-contacts">
+        
+        <a href="tel:773704939" class="dev-contact-item">
+          <div class="dev-contact-icon ci-phone"><i class="fas fa-phone"></i></div>
+          <div class="dev-contact-text">
+            <p class="dev-contact-label">اتصال مباشر</p>
+            <p class="dev-contact-value">773 704 939</p>
+          </div>
+          <i class="fas fa-chevron-left" style="color:#94a3b8;font-size:12px;"></i>
+        </a>
+        
+        <a href="https://wa.me/967773704939" target="_blank" rel="noopener" class="dev-contact-item">
+          <div class="dev-contact-icon ci-whatsapp"><i class="fab fa-whatsapp"></i></div>
+          <div class="dev-contact-text">
+            <p class="dev-contact-label">واتساب (رئيسي)</p>
+            <p class="dev-contact-value">773 704 939</p>
+          </div>
+          <i class="fas fa-chevron-left" style="color:#94a3b8;font-size:12px;"></i>
+        </a>
+        
+        <a href="https://wa.me/967739704861" target="_blank" rel="noopener" class="dev-contact-item">
+          <div class="dev-contact-icon ci-whatsapp"><i class="fab fa-whatsapp"></i></div>
+          <div class="dev-contact-text">
+            <p class="dev-contact-label">واتساب (ثاني)</p>
+            <p class="dev-contact-value">739 704 861</p>
+          </div>
+          <i class="fas fa-chevron-left" style="color:#94a3b8;font-size:12px;"></i>
+        </a>
+        
+        <a href="mailto:samialngar1989@gmail.com" class="dev-contact-item">
+          <div class="dev-contact-icon ci-email"><i class="fas fa-envelope"></i></div>
+          <div class="dev-contact-text">
+            <p class="dev-contact-label">البريد الإلكتروني</p>
+            <p class="dev-contact-value" style="font-size:12px;word-break:break-all;">samialngar1989@gmail.com</p>
+          </div>
+          <i class="fas fa-chevron-left" style="color:#94a3b8;font-size:12px;"></i>
+        </a>
+        
+      </div>
+      
+      <!-- التطبيقات -->
+      <h4 class="dev-apps-title"><i class="fas fa-th-large"></i> تطبيقاتي</h4>
+      <div class="dev-apps">
+        
+        <a href="https://samialngar1989-glitch.github.io/road-system/" target="_blank" rel="noopener" class="dev-app-link">
+          <div class="dev-app-icon ai-roads">🛣️</div>
+          <p class="dev-app-name">نظام الطرقات</p>
+          <p class="dev-app-desc">إدارة شركات الطرق</p>
+        </a>
+        
+        <a href="https://samialngar1989-glitch.github.io/Hasbalmbany/" target="_blank" rel="noopener" class="dev-app-link">
+          <div class="dev-app-icon ai-build">🏗️</div>
+          <p class="dev-app-name">الحاسبة الإنشائية</p>
+          <p class="dev-app-desc">حاسبة تكاليف البناء</p>
+        </a>
+        
+        <a href="https://samialngar1989-glitch.github.io/FIFA-2026/index.html" target="_blank" rel="noopener" class="dev-app-link">
+          <div class="dev-app-icon ai-shop">🛒</div>
+          <p class="dev-app-name">متجر طالب الله</p>
+          <p class="dev-app-desc">متجر إلكتروني</p>
+        </a>
+        
+        <a href="https://samialngar1989-glitch.github.io/Mirath/" target="_blank" rel="noopener" class="dev-app-link">
+          <div class="dev-app-icon ai-mirath">📖</div>
+          <p class="dev-app-name">حاسبة المواريث</p>
+          <p class="dev-app-desc">المواريث الشرعية</p>
+        </a>
+        
+        <a href="https://samialngar1989-glitch.github.io/Mtrgm-ali/" target="_blank" rel="noopener" class="dev-app-link">
+          <div class="dev-app-icon ai-translate">🎤</div>
+          <p class="dev-app-name">المترجم الصوتي</p>
+          <p class="dev-app-desc">نظام USUR</p>
+        </a>
+        
+      </div>
+      
+      <!-- التذييل -->
+      <div class="dev-footer">
+        <i class="fas fa-copyright"></i> 2026 سامي المجيدي — جميع الحقوق محفوظة
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<script>
+  // فتح النافذة
+  document.getElementById('devInfoBtn').addEventListener('click', function() {
+    document.getElementById('devModal').classList.add('active');
+  });
+  
+  // إغلاق النافذة
+  function closeDevModal() {
+    document.getElementById('devModal').classList.remove('active');
+  }
+  
+  // إغلاق بمفتاح ESC (للحاسوب)
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeDevModal();
+  });
+</script>
 </body>
 </html>
